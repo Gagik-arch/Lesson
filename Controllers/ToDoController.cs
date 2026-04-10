@@ -10,11 +10,11 @@ namespace Lesson.Controllers
     [Authorize]
     [ApiController]
     [Route("[controller]")]
-    public class ToDoController : ControllerBase
+    public class TodoController : ControllerBase
     {
         private readonly ITodoService _service;
 
-        public ToDoController(ITodoService service)
+        public TodoController(ITodoService service)
         {
             _service = service;
         }
