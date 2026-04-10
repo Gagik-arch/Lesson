@@ -1,5 +1,4 @@
-﻿using Lesson.Models;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -21,7 +20,6 @@ namespace Lesson.Services.Implementations
 
             Claim[] claims = new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, id),
                 new Claim(ClaimTypes.Email, email),
             };
 

@@ -8,6 +8,7 @@ using Lesson.Repositories.Interfaces;
 using Lesson.Services.Core;
 using Lesson.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using System.Diagnostics;
 
 namespace Lesson.Services.Implementations;
 
@@ -28,16 +29,22 @@ public class UserService : BaseService<IUserRepository>, IUserService
 
     public async Task<UserReadDTO> Create(UserWriteDTO user)
     {
-        if (await _repo.userByEmail(user.Email) != null)
+        string email = user.Email.ToLower();
+
+        User? us = await _repo.UserByEmail(email);
+
+        Debug.WriteLine("======>" + (us == null ? null : email));
+
+        if (await _repo.UserByEmail(user.Email) != null)
         {
-            throw new ConflictException("User with this eamil already exicts");
+            throw new ConflictException("User with this eamil already exicts!");
         }
 
         PasswordHasher<User> hasher = new PasswordHasher<User>();
 
         User newUser = new User
         {
-            Email = user.Email,
+            Email = email,
             Password = user.Password,
             CreatedAt = DateTime.UtcNow,
         };
@@ -52,7 +59,9 @@ public class UserService : BaseService<IUserRepository>, IUserService
 
     public async Task<LoginResponseDTO> Login(UserWriteDTO user)
     {
-        User? existedUser = await _repo.userByEmail(user.Email);
+        string email = user.Email.Trim().ToLower();
+        Debug.WriteLine($"INPUT EMAIL: {user.Email}");
+        User? existedUser = await _repo.UserByEmail(email);
 
         if (existedUser == null)
         {
@@ -77,20 +86,37 @@ public class UserService : BaseService<IUserRepository>, IUserService
         throw new BadRequestException("Password is wrong!");
     }
 
-    public UserReadDTO Me(string? email)
+    public async Task<UserReadDTO> Me(string? email)
     {
         if (email == null)
         {
-            throw new UnauthorizedException("User not found");
+            throw new ForbiddenException("Access denied!");
         }
 
-        User? existedUser = _repo.userByEmail(email).Result;
+        User? existedUser = await _repo.UserByEmail(email);
 
         if (existedUser == null)
         {
-            throw new NotFoundException("User not found");
+            throw new NotFoundException("User not found!");
         }
 
         return _mapper.Map<UserReadDTO>(existedUser);
+    }
+
+    public async Task<UserReadDTO> GetById(string id)
+    {
+        if (id == null) 
+        {
+            throw new BadRequestException("Id not provided!");
+        }
+
+        User? user = await _repo.GetById(id);
+
+        if (user == null)
+        {
+            throw new NotFoundException("User not found!");
+        }
+
+        return _mapper.Map<UserReadDTO>(user);
     }
 }

@@ -1,12 +1,12 @@
 ﻿using Lesson.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Xml;
 
 namespace Lesson.Data
 {
     public class AppDbContext : DbContext
     {
         public DbSet<User> Users { get; set; }
+        public DbSet<Todo> Todos{ get; set; }
         public IConfiguration _config { get; set; }
 
         public AppDbContext(

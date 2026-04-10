@@ -12,11 +12,10 @@ namespace Lesson.Services.Core
         protected readonly IMapper _mapper;
 
         protected readonly AppDbContext _context;
-
-        public BaseService(RepoType repo, IMapper mapper, AppDbContext context)
+        public BaseService(RepoType repo, IMapper mapper, AppDbContext context )
         {
             _repo = repo;
-            _mapper = mapper;
+            _mapper = mapper;      
             _context = context;
         }
     }

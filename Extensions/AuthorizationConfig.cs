@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Lesson.Exceptions;
+using Lesson.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 using System.Text;
 
 namespace Lesson.Extensions
@@ -29,7 +33,39 @@ namespace Lesson.Extensions
                       ValidateLifetime = true,
                       IssuerSigningKey = new SymmetricSecurityKey(key),
                   };
+        
+                  options.Events = new JwtBearerEvents
+                  {
+                      OnChallenge = async context =>
+                      {
+                          context.HandleResponse();
+                          throw new UnauthorizedException("Invalid or missing authorization!");
+                      },
+
+                      OnForbidden = context =>
+                      {
+                          throw new ForbiddenException("Access denied!");
+                      },
+
+                      OnTokenValidated = async context =>
+                      {
+                          var userService = context.HttpContext.RequestServices
+                              .GetRequiredService<IUserService>();
+
+                          var email = context.Principal?
+                              .FindFirst(ClaimTypes.Email)?.Value;
+
+                          var user = await userService.Me(email);
+
+                          if (user == null)
+                          {
+                              context.Fail("Unauthorized");
+                          }
+                      }
+                  };
               });
+
+   
         }
     }
 }

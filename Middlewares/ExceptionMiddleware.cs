@@ -38,31 +38,25 @@ namespace Lesson.Middlewares.ExceptionMiddleware
 
         private Task HandleException(HttpContext context, Exception ex)
         {
-            int status = StatusCodes.Status500InternalServerError;
-
-            string title = ex.Message ?? "An unexpected error occurred";
-
-            var map = new Dictionary<Type, int>
-{
-    { typeof(ConflictException), StatusCodes.Status409Conflict },
-    { typeof(NotFoundException), StatusCodes.Status404NotFound },
-    { typeof(BadRequestException), StatusCodes.Status400BadRequest },
-    { typeof(UnauthorizedException), StatusCodes.Status401Unauthorized },
-};
-
-            Type exceptionType = ex.GetType();
+            int status = ex switch
+            {
+                ConflictException => StatusCodes.Status409Conflict,
+                NotFoundException => StatusCodes.Status404NotFound,
+                BadRequestException => StatusCodes.Status400BadRequest,
+                UnauthorizedException => StatusCodes.Status401Unauthorized,
+                ForbiddenException => StatusCodes.Status403Forbidden,
+                _ => StatusCodes.Status500InternalServerError
+            };
 
             ProblemDetails problem = new ProblemDetails
             {
-                Title = title,
-                Status = map[exceptionType],
+                Title = status == 500 ? "Internal Server Error" : (ex.Message ?? "An unexpected error occurred"),
+                Status = status,
                 Type = $"https://httpstatuses.com/{status}",
             };
 
-            // ✅ Add trace id (VERY useful)
             problem.Extensions["traceId"] = context.TraceIdentifier;
 
-            // ✅ Hide details in production
             if (_env.IsDevelopment())
             {
                 problem.Detail = ex.StackTrace;

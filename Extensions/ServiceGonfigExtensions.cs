@@ -30,11 +30,13 @@ namespace Lesson.Extensions
             services.AddSingleton<JwtService>();
 
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ITodoService, TodoService>();
         }
 
         public static void RegisterRepositories(this IServiceCollection services)
         {
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ITodoRepository, TodoRepository>();
         }
 
         public static void RegisterMappers(this IServiceCollection services)
@@ -42,6 +44,7 @@ namespace Lesson.Extensions
             services.AddAutoMapper(option =>
             {
                 option.AddProfile<UserMapper>();
+                option.AddProfile<TodoMapper>();
             });
         }
     }
