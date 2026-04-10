@@ -31,10 +31,6 @@ public class UserService : BaseService<IUserRepository>, IUserService
     {
         string email = user.Email.ToLower();
 
-        User? us = await _repo.UserByEmail(email);
-
-        Debug.WriteLine("======>" + (us == null ? null : email));
-
         if (await _repo.UserByEmail(user.Email) != null)
         {
             throw new ConflictException("User with this eamil already exicts!");
@@ -42,7 +38,7 @@ public class UserService : BaseService<IUserRepository>, IUserService
 
         PasswordHasher<User> hasher = new PasswordHasher<User>();
 
-        User newUser = new User
+        User newUser = new()
         {
             Email = email,
             Password = user.Password,
@@ -60,7 +56,7 @@ public class UserService : BaseService<IUserRepository>, IUserService
     public async Task<LoginResponseDTO> Login(UserWriteDTO user)
     {
         string email = user.Email.Trim().ToLower();
-        Debug.WriteLine($"INPUT EMAIL: {user.Email}");
+
         User? existedUser = await _repo.UserByEmail(email);
 
         if (existedUser == null)

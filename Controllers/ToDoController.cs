@@ -32,7 +32,7 @@ namespace Lesson.Controllers
                       new
                       {
                           Data = result,
-                          Message = "User created succesfully"
+                          Message = "Todo created succesfully"
                       }
             );
         }

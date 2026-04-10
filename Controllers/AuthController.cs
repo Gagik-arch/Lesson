@@ -40,7 +40,7 @@ namespace Lesson.Controllers
              );
         }
 
-        [HttpPost("login")]
+        [HttpPost("login", Name = "Login")]
         public async Task<IActionResult> Login([FromBody] UserWriteDTO user)
         {
             LoginResponseDTO response = await _service.Login(user);
