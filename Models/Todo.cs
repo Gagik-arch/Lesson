@@ -16,5 +16,7 @@ namespace Lesson.Models
         public bool IsCompleted { get; set; } = false;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public string? Image { get; set; }
     }
 }

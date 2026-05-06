@@ -9,5 +9,6 @@ namespace Lesson.Data.DTO.Write
         public required string Title { get; set; }
 
         public string? Description { get; set; }
+        public IFormFile? Image { get; set; }
     }
 }

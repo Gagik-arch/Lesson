@@ -3,6 +3,7 @@ using Lesson.Data.DTO.Write;
 using Lesson.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 using System.Security.Claims;
 
 namespace Lesson.Controllers
@@ -20,7 +21,7 @@ namespace Lesson.Controllers
         }
 
         [HttpPost(Name = "CreateToDo")]
-        public async Task<IActionResult> Create([FromBody] TodoWriteDTO todo)
+        public async Task<IActionResult> Create([FromForm] TodoWriteDTO todo)
         {
             string? email = User.FindFirst(ClaimTypes.Email)?.Value;
 

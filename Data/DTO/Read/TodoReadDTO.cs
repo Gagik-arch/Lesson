@@ -15,5 +15,6 @@ namespace Lesson.Data.DTO.Read
         public required bool IsCompleted { get; set; }
 
         public required DateTime CreatedAt { get; set; }
+        public string? Image { get; set; }
     }
 }

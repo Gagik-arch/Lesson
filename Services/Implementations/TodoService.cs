@@ -7,11 +7,13 @@ using Lesson.Models;
 using Lesson.Repositories.Interfaces;
 using Lesson.Services.Core;
 using Lesson.Services.Interfaces;
-using System.Diagnostics;
+using Lesson.Helpers;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Lesson.Services.Implementations
 {
-    public class TodoService:BaseService<ITodoRepository>, ITodoService
+    public class TodoService : BaseService<ITodoRepository>, ITodoService
     {
         public TodoService(
                ITodoRepository repo,
@@ -22,11 +24,14 @@ namespace Lesson.Services.Implementations
         {
         }
 
-        public async Task<TodoReadDTO> Add(string? email,TodoWriteDTO toDo) 
+        public async Task<TodoReadDTO> Add(string? email, TodoWriteDTO toDo)
         {
-            if (email == null) {
+            if (email == null)
+            {
                 throw new BadRequestException("User not found!");
             }
+
+            Io.CreateDirectory(Constants.TodoUploadPath);
 
             Todo _toDo = new()
             {
@@ -35,13 +40,35 @@ namespace Lesson.Services.Implementations
                 Description = toDo.Description,
             };
 
+
+            if (toDo.Image is not null)
+            {
+                string imageName = toDo.Image.FileName;
+
+                var filePath = Path.Combine(Constants.TodoUploadPath, imageName);
+
+                if (!File.Exists(filePath))
+                {
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await toDo.Image.CopyToAsync(stream);
+                    }
+                }
+                _toDo.Image = imageName;
+            }
+
             await _repo.Add(_toDo);
+
             await _context.SaveChangesAsync();
+            string url = Constants.TodoUploadPath.Replace(Constants.Base, "");
+
+            _toDo.Image = $"/{url.Replace("\\", "/")}/{_toDo.Image}";
 
             return _mapper.Map<Todo, TodoReadDTO>(_toDo);
         }
 
-        public async Task<List<TodoReadDTO>> GetAll(string? email) {
+        public async Task<List<TodoReadDTO>> GetAll(string? email)
+        {
             if (email == null)
             {
                 throw new BadRequestException("User not found!");
