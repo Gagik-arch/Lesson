@@ -7,9 +7,7 @@ namespace Lesson.Repositories.Implementations
 {
     public class TodoRepository : BaseRepository<Todo>, ITodoRepository
     {
-
         public TodoRepository(AppDbContext context) : base(context) { }
-
 
         public async Task<List<Todo>> GetAllByEmail(string email)
         {

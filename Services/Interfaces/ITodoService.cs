@@ -1,8 +1,5 @@
 ﻿using Lesson.Data.DTO.Read;
 using Lesson.Data.DTO.Write;
-using Lesson.Models;
-using Lesson.Repositories.core;
-using Lesson.Services.Core;
 
 namespace Lesson.Services.Interfaces;
 public interface ITodoService

@@ -10,10 +10,12 @@ namespace Lesson.Extensions
 {
     public static class AuthorizationConfig
     {
-
-        public static void AddAuthorizationConfig(this IServiceCollection services, string _key)
+        public static void AddAuthorizationConfig(
+                this IServiceCollection services,
+                IConfiguration configuration
+            )
         {
-            byte[] key = Encoding.UTF8.GetBytes(_key);
+            byte[] key = Encoding.UTF8.GetBytes(configuration["JWT:Key"] ?? "");
 
             services.AddAuthentication(options =>
             {
@@ -52,7 +54,7 @@ namespace Lesson.Extensions
                           var userService = context.HttpContext.RequestServices
                               .GetRequiredService<IUserService>();
 
-                          var email = context.Principal?
+                          string? email = context.Principal?
                               .FindFirst(ClaimTypes.Email)?.Value;
 
                           var user = await userService.Me(email);

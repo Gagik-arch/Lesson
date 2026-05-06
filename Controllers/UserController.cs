@@ -35,5 +35,11 @@ namespace Lesson.Controllers
             return Ok(user);
     
         }
+
+        [HttpGet(Name = "GetAllUsers")]
+        public ActionResult getAll()
+        {
+            return Ok("Get All USers");
+        }
     }
 }

@@ -1,9 +1,11 @@
 ﻿using Lesson.Data;
 using Lesson.Data.Mappers;
+using Lesson.Models;
 using Lesson.Repositories.Implementations;
 using Lesson.Repositories.Interfaces;
 using Lesson.Services.Implementations;
 using Lesson.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lesson.Extensions
@@ -28,6 +30,9 @@ namespace Lesson.Extensions
         public static void RegisterServices(this IServiceCollection services)
         {
             services.AddSingleton<JwtService>();
+
+            services.AddSingleton<IOTPService, OTPService>();
+            services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITodoService, TodoService>();

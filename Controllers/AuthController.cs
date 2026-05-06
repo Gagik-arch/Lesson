@@ -1,8 +1,10 @@
 using Lesson.Data.DTO.Read;
 using Lesson.Data.DTO.Write;
+using Lesson.Extensions;
 using Lesson.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace Lesson.Controllers
 {
@@ -12,16 +14,13 @@ namespace Lesson.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IUserService _service;
+        private readonly IOTPService _OTPService;
 
-        public AuthController(IUserService service)
+        public AuthController(IUserService service, IOTPService OTPService)
         {
             _service = service;
-        }
+            _OTPService = OTPService;
 
-        [HttpGet(Name = "GetAllUsers")]
-        public ActionResult getAll()
-        {
-            return Ok("Get All USers");
         }
 
         [HttpPost("signup", Name = "Signup")]
@@ -46,6 +45,32 @@ namespace Lesson.Controllers
             LoginResponseDTO response = await _service.Login(user);
 
             return Ok(response);
+        }
+
+        [HttpPost("forgot-password", Name = "ForgotPassword")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO forgotPassword)
+        {
+            UserReadDTO user = await _service.Me(forgotPassword.Email);
+
+            bool otpCodeStatus = await _OTPService.SendOTPAsync(user.Email);
+
+            return Ok(new { status = otpCodeStatus });
+        }
+
+        [HttpPost("verify-otp", Name = "VerifyOTP")]
+        public async Task<IActionResult> VerifyOTP([FromBody] VerifyOTPDTO verifyOTP)
+        {
+            await _OTPService.VerifyOtpAsync(verifyOTP.Email, verifyOTP.Code);
+
+            return Ok(new { Message = "OTP verified successfully" });
+        }
+
+        [HttpPost("change-password", Name = "ChangePassword")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO newDetails)
+        {
+            await _service.ChangePassword(newDetails);
+
+            return Ok(new { Message = "OTP verified successfully" });
         }
     }
 }

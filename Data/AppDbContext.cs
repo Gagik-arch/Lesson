@@ -10,8 +10,8 @@ namespace Lesson.Data
         public IConfiguration _config { get; set; }
 
         public AppDbContext(
-            DbContextOptions<AppDbContext> options,
-            IConfiguration config
+                DbContextOptions<AppDbContext> options,
+                IConfiguration config
             ) : base(options)
         {
             _config = config;

@@ -11,4 +11,6 @@ public interface IUserService
     Task<UserReadDTO> Me(string? email);
 
     Task<UserReadDTO> GetById(string id);
+    
+    Task ChangePassword(ChangePasswordDTO newDetails);
 }

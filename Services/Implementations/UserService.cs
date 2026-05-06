@@ -8,7 +8,6 @@ using Lesson.Repositories.Interfaces;
 using Lesson.Services.Core;
 using Lesson.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using System.Diagnostics;
 
 namespace Lesson.Services.Implementations;
 
@@ -114,5 +113,24 @@ public class UserService : BaseService<IUserRepository>, IUserService
         }
 
         return _mapper.Map<UserReadDTO>(user);
+    }
+
+    public async Task ChangePassword(ChangePasswordDTO newDetails) { 
+
+        string email = newDetails.Email.Trim().ToLower();
+
+        User? existedUser = await _repo.UserByEmail(email);
+
+        if (existedUser == null)
+        {
+            throw new NotFoundException("User not found!");
+        }
+
+        PasswordHasher<User> hasher = new PasswordHasher<User>();
+
+        existedUser.Password = hasher.HashPassword(existedUser, newDetails.NewPassword);
+
+        _repo.Update(existedUser);
+        await _context.SaveChangesAsync();
     }
 }
