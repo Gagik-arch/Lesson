@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace Lesson.Helpers
+﻿namespace Lesson.Helpers
 {
     public class Constants
     {

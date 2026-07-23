@@ -1,11 +1,9 @@
 using Lesson.Extensions;
+using Lesson.Helpers;
 using Lesson.Middlewares.ExceptionMiddleware;
 using Microsoft.Extensions.FileProviders;
-using Lesson.Helpers;
-using System.Diagnostics;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-
 
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
@@ -33,7 +31,7 @@ app.MapControllers();
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(Constants.TodoUploadPath),
-    RequestPath = $"/{Constants.TodoUploadPath.Replace(Constants.Base, "").Replace("\\","/")}"
+    RequestPath = $"/{Constants.TodoUploadPath.Replace(Constants.Base, "").Replace("\\", "/")}"
 });
 
 app.Run();

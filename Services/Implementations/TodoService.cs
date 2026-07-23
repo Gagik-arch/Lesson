@@ -46,7 +46,7 @@ namespace Lesson.Services.Implementations
                 string imageName = toDo.Image.FileName;
 
                 var filePath = Path.Combine(Constants.TodoUploadPath, imageName);
-
+              
                 if (!File.Exists(filePath))
                 {
                     using (var stream = new FileStream(filePath, FileMode.Create))

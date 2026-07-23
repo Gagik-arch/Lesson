@@ -72,7 +72,7 @@ namespace Lesson.Services.Implementations
 
                  await _redis.KeyDeleteAsync($"otp:{email}");
             }
-            catch (Exception e){
+            catch{
                 throw new BadRequestException("Invalid OTP");
             }
         }
