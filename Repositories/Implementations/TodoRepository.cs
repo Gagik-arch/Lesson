@@ -3,6 +3,7 @@ using Lesson.Models;
 using Lesson.Repositories.core;
 using Lesson.Repositories.Interfaces;
 using Lesson.Helpers;
+using Microsoft.EntityFrameworkCore;
 
 namespace Lesson.Repositories.Implementations
 {
@@ -12,19 +13,12 @@ namespace Lesson.Repositories.Implementations
 
         public async Task<List<Todo>> GetAllByEmail(string email)
         {
-            var filtered = _dbSet.Where(x => x.Author == email).ToList();
-
-            return filtered.Select(todo =>
-            {
-
-                if (todo.Image is not null)
-                {
-                    string url = Constants.TodoUploadPath.Replace(Constants.Base, "");
-
-                    todo.Image = $"/{url.Replace("\\","/")}/{todo.Image}";
-                }
-                return todo;
-            }).ToList();
+            List<Todo> todos = await _dbSet
+              .AsNoTracking()
+              .Where(todo => todo.Author == email)
+              .ToListAsync();
+        
+            return todos;
         }
     }
 }

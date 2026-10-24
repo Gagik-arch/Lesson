@@ -2,6 +2,7 @@ using Lesson.Extensions;
 using Lesson.Helpers;
 using Lesson.Middlewares.ExceptionMiddleware;
 using Microsoft.Extensions.FileProviders;
+using Scalar.AspNetCore;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -17,12 +18,18 @@ builder.Services.RegisterServices();
 builder.Services.RegisterRepositories();
 
 WebApplication app = builder.Build();
+Io.CreateDirectory(Constants.TodoUploadPath);
 
 app.UseMiddleware<ExceptionMiddleware>();
 
-Io.CreateDirectory(Constants.TodoUploadPath);
+//app.OpenApiConfiguration();
 
-app.OpenApiConfiguration();
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+    app.MapScalarApiReference();
+}
+
 app.UseHsts();
 app.UseHttpsRedirection();
 app.UseAuthentication();

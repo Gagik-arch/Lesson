@@ -10,7 +10,14 @@ namespace Lesson.Data.Mappers
         public TodoMapper()
         {
             CreateMap<TodoReadDTO, TodoWriteDTO>();
-            CreateMap<Todo, TodoReadDTO>();
+            CreateMap<Todo, TodoReadDTO>()
+                .ForMember(
+                    dest => dest.Image,
+                    opt => opt.MapFrom(src =>
+                        src.Image == null
+                            ? null
+                            : $"/uploads/todos/{src.Image}"
+                    )); ;
         }
     }
 }

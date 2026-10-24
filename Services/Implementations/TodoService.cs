@@ -69,14 +69,19 @@ namespace Lesson.Services.Implementations
 
         public async Task<List<TodoReadDTO>> GetAll(string? email)
         {
-            if (email == null)
+            if (string.IsNullOrWhiteSpace(email))
             {
                 throw new BadRequestException("User not found!");
             }
 
-            List<Todo> toDos = await _repo.GetAllByEmail(email);
+            List<Todo> todos = await _repo.GetAllByEmail(email);
 
-            return _mapper.Map<List<Todo>, List<TodoReadDTO>>(toDos);
+            var uploadPath = Constants.TodoUploadPath
+                 .Replace(Constants.Base, "")
+                 .Replace("\\", "/")
+                 .Trim('/');
+
+            return _mapper.Map<List<Todo>, List<TodoReadDTO>>(todos);
         }
     }
 }
